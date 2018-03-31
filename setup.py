@@ -4,16 +4,17 @@ from os import path
 with open("README.rst") as readme_file:
     readme = readme_file.read()
 
-with open(path.join("ledge", "__version__.py")) as fp:
-    version = fp.read().split("=")[1].strip()[1:-1]
+about = {}
+with open(path.join("ledge", "__about__.py")) as fp:
+    exec(fp.read(), about)
 
 setup(
     name="ledge",
-    version=version,
+    version=about["__version__"],
     description="Hedging algorithms with lag",
     long_description=readme,
-    author="Abhinav Tushar",
-    author_email="lepisma@fastmail.com",
+    author=about["__author__"],
+    author_email=about["__email__"],
     url="https://github.com/reichlab/ledge",
     install_requires=[],
     keywords="",
