@@ -8,6 +8,11 @@ about = {}
 with open(path.join("ledge", "__about__.py")) as fp:
     exec(fp.read(), about)
 
+requirements = [
+    "numpy",
+    "xarray"
+]
+
 setup(
     name="ledge",
     version=about["__version__"],
@@ -16,7 +21,7 @@ setup(
     author=about["__author__"],
     author_email=about["__email__"],
     url="https://github.com/reichlab/ledge",
-    install_requires=[],
+    install_requires=requirements,
     keywords="",
     license="GPLv3",
     packages=find_packages(),
