@@ -63,8 +63,9 @@ truth it came from had a ~lag~.
 Loss = xr.DataArray
 #+END_SRC
 
-** Weights
-This series defines the weights assigned to models.
+** Weight
+This defines the weights assigned to models. The ~coords~ match the ~model~ from
+predictions.
 
 #+BEGIN_SRC python
 Weight = xr.DataArray
