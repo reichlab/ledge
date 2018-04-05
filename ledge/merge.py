@@ -28,7 +28,11 @@ def _get_lag(series: Series) -> int:
     Parse lag value from the series
     """
 
-    return ("lag" in series.attrs and series.attrs["lag"]) or np.inf
+    lag = ("lag" in series.attrs and series.attrs["lag"])
+    if lag is False:
+        return np.inf
+    else:
+        return lag
 
 
 def _sort_lags(series_list: List[Series]) -> List[Series]:
