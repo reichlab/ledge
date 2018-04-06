@@ -1,12 +1,10 @@
 .PHONY: init
 init:
-	pip install pipenv --upgrade
-	pipenv install --dev
+	pip install tox pipenv --upgrade
 
 .PHONY: test
 test:
-	pipenv run pytest
-	pipenv run mypy ./ledge
+	tox
 
 .PHONY: publish
 publish:
