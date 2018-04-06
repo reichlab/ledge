@@ -14,4 +14,4 @@ def test_latest():
 
     expected = xr.DataArray([3, 3, 3, 3, 2, 1, 0], dims="timepoints", coords={ "timepoints": range(times) })
 
-    assert np.all(expected, merge.latest(series_list))
+    assert np.all(expected == merge.latest(series_list))
