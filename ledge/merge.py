@@ -35,14 +35,6 @@ def _get_lag(series: Series) -> int:
         return lag
 
 
-def _sort_lags(series_list: List[Series]) -> List[Series]:
-    """
-    Sort series according to lags. Latest goes to the end.
-    """
-
-    return sorted(series_list, key=_get_lag)
-
-
 def _merge_lags(series_list: List[Series]) -> xr.Dataset:
     """
     Create a left joined dataset
@@ -60,7 +52,7 @@ def latest(series_list: List[Series]) -> Series:
     Skip older lag values. Prefer series without lag set.
     """
 
-    dataset = _merge_lags(_sort_lags(series_list))
+    dataset = _merge_lags(sorted(series_list, key=_get_lag))
     return _get_right_envelope(dataset)
 
 
