@@ -13,7 +13,11 @@ def ftl(losses: List[Loss], init_weights=None) -> Weight:
     Follow the leader update. Give full weight to the model with least loss.
     """
 
-    raise NotImplementedError()
+    models = [loss.attrs["model"] for loss in losses]
+    best_idx = np.argmin([loss.sum() for loss in losses])
+    weights = [1 if i == best_idx else 0 for i in range(len(losses))]
+
+    return xr.DataArray(weights, dims="model", coords={ "model": models })
 
 
 def ftpl(losses: List[Loss]) -> Weight:
