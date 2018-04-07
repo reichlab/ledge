@@ -63,6 +63,7 @@ def variable_share(losses: List[Loss]) -> Weight:
     r"""
     Variable share update.
     """
+
     raise NotImplementedError()
 
 
