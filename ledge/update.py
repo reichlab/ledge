@@ -42,7 +42,21 @@ def fixed_share(losses: List[Loss], eta: float, alpha: float, init_weights=None)
     Fixed share update.
     """
 
-    raise NotImplementedError()
+    models = [loss.attrs["model"] for loss in losses]
+    M = len(models)
+    T = len(losses[0])
+
+    if init_weights is None:
+        weights = _uniform_weights(models, ones=False)
+    else:
+        weights = init_weights
+
+    # Vectorize this
+    for t in range(T):
+        vs = weights * np.exp([-eta * loss[t] for loss in losses])
+        weights = (alpha * np.sum(vs) / M) + (1 - alpha) * vs
+
+    return weights
 
 
 def variable_share(losses: List[Loss]) -> Weight:
