@@ -62,7 +62,7 @@ def mw(losses: List[Loss], eta: float, init_weights=None) -> Weight:
     if init_weights is None:
         init_weights = _uniform_weights(models)
 
-    updates = [(1 - eta * loss).prod() for loss in losses]
+    updates = [np.prod(1 - eta * loss) for loss in losses]
 
     return init_weights * updates
 
@@ -72,4 +72,11 @@ def hedge(losses: List[Loss], eta: float, init_weights=None) -> Weight:
     Exponential weight update. :math:`w_i(t + 1) = w_i(t) e^{- \eta m_i(t)}`
     """
 
-    raise NotImplementedError()
+    models = [loss.attrs["model"] for loss in losses]
+
+    if init_weights is None:
+        init_weights = _uniform_weights(models)
+
+    updates = [np.exp(-eta * np.sum(loss)) for loss in losses]
+
+    return init_weights * updates
