@@ -8,7 +8,7 @@ from typing import List
 from ledge.datatypes import Loss, Weight
 
 
-def _uniform_weights(models: List[string], ones=True) -> Weight:
+def _uniform_weights(models: List[str], ones=True) -> Weight:
     weights = xr.DataArray(np.ones(len(models)))
 
     if not ones:
