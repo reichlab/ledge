@@ -4,7 +4,7 @@ Utilities
 
 import numpy as np
 import xarray as xr
-from typing import Union
+from typing import Union, List
 from ledge.datatypes import Truth, Loss, Weight
 
 
