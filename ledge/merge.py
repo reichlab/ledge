@@ -29,11 +29,7 @@ def _merge_lags(series_list: List[Series]) -> xr.Dataset:
     Create a left joined dataset
     """
 
-    # Add dummy names based on lags
-    for series in series_list:
-        series.name = get_lag(series)
-
-    return xr.merge(series_list, join="left")
+    return xr.merge([ser.rename(get_lag(ser)) for ser in series_list], join="left")
 
 
 def latest(series_list: List[Series]) -> Series:
