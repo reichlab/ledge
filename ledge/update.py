@@ -25,6 +25,7 @@ def nop(losses: List[Loss], init_weights=None) -> Weight:
     Do nothing.
     """
 
+    models = [loss.attrs["model"] for loss in losses]
     if init_weights is None:
         return uniform_weights(models, ones=False)
     else:
