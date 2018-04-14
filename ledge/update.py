@@ -20,7 +20,7 @@ def ftl(losses: List[Loss], init_weights=None) -> Weight:
     return xr.DataArray([1 if i == best_idx else 0 for i in range(len(losses))],
                         dims="model", coords={ "model": models })
 
-def nop(losses: List[Loss], init_weights=None) -> Weights:
+def nop(losses: List[Loss], init_weights=None) -> Weight:
     """
     Do nothing.
     """
