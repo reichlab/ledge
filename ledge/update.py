@@ -6,15 +6,7 @@ import xarray as xr
 import numpy as np
 from typing import List
 from ledge.datatypes import Loss, Weight
-
-
-def _uniform_weights(models: List[str], ones=True) -> Weight:
-    weights = xr.DataArray(np.ones(len(models)))
-
-    if not ones:
-        weights /= len(models)
-
-    return xr.DataArray(weights, dims="model", coords={ "model": models })
+from ledge.utils import uniform_weights
 
 
 def ftl(losses: List[Loss], init_weights=None) -> Weight:
@@ -47,7 +39,7 @@ def fixed_share(losses: List[Loss], eta: float, alpha: float, init_weights=None)
     T = len(losses[0])
 
     if init_weights is None:
-        weights = _uniform_weights(models, ones=False)
+        weights = uniform_weights(models, ones=False)
     else:
         weights = init_weights
 
@@ -75,7 +67,7 @@ def mw(losses: List[Loss], eta: float, init_weights=None) -> Weight:
     models = [loss.attrs["model"] for loss in losses]
 
     if init_weights is None:
-        init_weights = _uniform_weights(models)
+        init_weights = uniform_weights(models)
 
     updates = [np.prod(1 - eta * loss) for loss in losses]
 
@@ -90,7 +82,7 @@ def hedge(losses: List[Loss], eta: float, init_weights=None) -> Weight:
     models = [loss.attrs["model"] for loss in losses]
 
     if init_weights is None:
-        init_weights = _uniform_weights(models)
+        init_weights = uniform_weights(models)
 
     updates = [np.exp(-eta * np.sum(loss)) for loss in losses]
 

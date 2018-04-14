@@ -3,8 +3,9 @@ Utilities
 """
 
 import numpy as np
+import xarray as xr
 from typing import Union
-from ledge.datatypes import Truth, Loss
+from ledge.datatypes import Truth, Loss, Weight
 
 
 def get_lag(series: Union[Truth, Loss]) -> int:
@@ -17,3 +18,12 @@ def get_lag(series: Union[Truth, Loss]) -> int:
         return np.inf
     else:
         return lag
+
+
+def uniform_weights(models: List[str], ones=True) -> Weight:
+    weights = xr.DataArray(np.ones(len(models)))
+
+    if not ones:
+        weights /= len(models)
+
+    return xr.DataArray(weights, dims="model", coords={ "model": models })
