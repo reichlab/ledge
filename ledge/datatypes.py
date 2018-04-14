@@ -4,6 +4,7 @@ Do not edit by hand.
 """
 
 import xarray as xr
+from typing import Union
 
 Truth = xr.DataArray
 
@@ -12,3 +13,5 @@ Prediction = xr.DataArray
 Loss = xr.DataArray
 
 Weight = xr.DataArray
+
+Series = Union[Truth, Loss]

@@ -20,6 +20,7 @@ dimensional matrix, we use [[https://github.com/pydata/xarray][xarray]] as our b
 
 #+BEGIN_SRC python
 import xarray as xr
+from typing import Union
 #+END_SRC
 
 * Types
@@ -69,4 +70,11 @@ predictions.
 
 #+BEGIN_SRC python
 Weight = xr.DataArray
+#+END_SRC
+
+** Series
+This is just a union of ~Loss~ and ~Truth~.
+
+#+BEGIN_SRC python
+Series = Union[Truth, Loss]
 #+END_SRC
