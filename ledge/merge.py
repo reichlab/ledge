@@ -44,6 +44,14 @@ def latest(series_list: List[Series]) -> Series:
     return latest_series
 
 
+def zero(series_list: List[Series]) -> Series:
+    """
+    Do nothing. Return the series with lowest lag value
+    """
+
+    return sorted(series_list, key=get_lag)[0]
+
+
 def mix_alpha(series_list: List[Series]) -> Series:
     """
     Use alpha to weigh the last lag value
