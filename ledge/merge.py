@@ -21,7 +21,7 @@ def _get_right_envelope(ds: xr.Dataset) -> xr.DataArray:
     n_cols = array.shape[0]
 
     col_idx = n_cols - 1 - np.flip(np.isnan(array), axis=0).argmin(dim="variable")
-    return array.isel(variable = col_idx)
+    return array.isel(variable = col_idx).rename({ "variable": "lag" })
 
 
 def _merge_lags(series_list: List[Series]) -> xr.Dataset:
@@ -38,7 +38,10 @@ def latest(series_list: List[Series]) -> Series:
     """
 
     dataset = _merge_lags(sorted(series_list, key=get_lag))
-    return _get_right_envelope(dataset)
+    latest_series = _get_right_envelope(dataset)
+    latest_series.attrs = series_list[0].attrs
+    latest_series.attrs.pop("lag", None)
+    return latest_series
 
 
 def mix_alpha(series_list: List[Series]) -> Series:
