@@ -34,7 +34,7 @@ def _merge_lags(series_list: List[Series]) -> xr.Dataset:
 
 def latest(series_list: List[Series], sort_fn=get_lag) -> Series:
     """
-    Skip older lag values. Prefer series without lag set.
+    Return series with largest lag. Prefer series without lag set.
     """
 
     dataset = _merge_lags(sorted(series_list, key=sort_fn))
@@ -46,7 +46,7 @@ def latest(series_list: List[Series], sort_fn=get_lag) -> Series:
 
 def earliest(series_list: List[Series]) -> Series:
     """
-    Return a series with smallest lag. Return the series with lowest lag value
+    Return series with smallest lag.
     """
 
     return latest(series_list, sort_fn=lambda l: -get_lag(l))
