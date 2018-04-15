@@ -50,19 +50,3 @@ def earliest(series_list: List[Series]) -> Series:
     """
 
     return latest(series_list, sort_fn=lambda l: -get_lag(l))
-
-
-def mix_alpha(series_list: List[Series]) -> Series:
-    """
-    Use alpha to weigh the last lag value
-    """
-
-    raise NotImplementedError()
-
-
-def mean(series_list: List[Series]) -> Series:
-    """
-    Take mean of all the values that we have
-    """
-
-    raise NotImplementedError()
