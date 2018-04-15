@@ -25,7 +25,7 @@ def test_earliest():
     series_list = []
     for lag in range(max_lag + 1):
         values = np.ones((times - (max_lag - lag),)) * lag
-        series_list.append(make_series(values, range(times - (max_lag - lag))))
+        series_list.append(make_series(values, range(times - (max_lag - lag)), lag))
 
     expected = make_series([0, 0, 0, 1, 2, 3, 4], range(times))
 
