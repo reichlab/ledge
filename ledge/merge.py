@@ -32,24 +32,24 @@ def _merge_lags(series_list: List[Series]) -> xr.Dataset:
     return xr.merge([ser.rename(get_lag(ser)) for ser in series_list], join="left")
 
 
-def latest(series_list: List[Series]) -> Series:
+def latest(series_list: List[Series], sort_fn=get_lag) -> Series:
     """
     Skip older lag values. Prefer series without lag set.
     """
 
-    dataset = _merge_lags(sorted(series_list, key=get_lag))
+    dataset = _merge_lags(sorted(series_list, key=sort_fn))
     latest_series = _get_right_envelope(dataset)
     latest_series.attrs = series_list[0].attrs
     latest_series.attrs.pop("lag", None)
     return latest_series
 
 
-def zero(series_list: List[Series]) -> Series:
+def earliest(series_list: List[Series]) -> Series:
     """
-    Do nothing. Return the series with lowest lag value
+    Return a series with smallest lag. Return the series with lowest lag value
     """
 
-    return sorted(series_list, key=get_lag)[0]
+    return latest(series_list, sort_fn=lambda l: -get_lag(l))
 
 
 def mix_alpha(series_list: List[Series]) -> Series:
