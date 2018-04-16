@@ -95,16 +95,12 @@ def diff_window(series_list: List[Series], window_fn, inc=False) -> List[Series]
     return output
 
 
-"""
-Weigh the past by taking mean of all
-"""
 diff_mean = partial(diff_window, window_fn=normalize(window_uniform))
+diff_mean.__doc__ = "Weigh the past by taking mean of all"
 
 
-"""
-Fill in values by weighing the past linearly
-"""
 diff_linear = partial(diff_window, window_fn=normalize(window_linear))
+diff_linear.__doc__ = "Fill in values by weighing the past linearly"
 
 
 def diff_geometric(series_list: List[Series], gamma: float, inc=False) -> List[Series]:
