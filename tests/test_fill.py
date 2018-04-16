@@ -26,7 +26,7 @@ def test_diff_mean_noninc():
     output = fill.diff_mean(input_list)
 
     for o, eo in zip(output, expected_output_list):
-        assert np.all(o == eo)
+        assert np.allclose(o, eo)
 
 
 def test_diff_mean_inc():
@@ -48,7 +48,7 @@ def test_diff_mean_inc():
         make_series(np.concatenate([np.linspace(1, times - 3, times - 3), [8, 4.5, 4.5]]), range(times), 2),
     ]
 
-    output = fill.diff_mean(input_list, incremental=True)
+    output = fill.diff_mean(input_list, inc=True)
 
     for o, eo in zip(output, expected_output_list):
-        assert np.all(o == eo)
+        assert np.allclose(o, eo)

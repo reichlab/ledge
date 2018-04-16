@@ -15,7 +15,7 @@ def test_latest():
 
     expected = make_series([4, 4, 4, 3, 2, 1, 0], range(times))
 
-    assert np.all(expected == merge.latest(series_list))
+    assert np.allclose(expected, merge.latest(series_list))
 
 
 def test_earliest():
@@ -29,4 +29,4 @@ def test_earliest():
 
     expected = make_series([0, 0, 0, 1, 2, 3, 4], range(times))
 
-    assert np.all(expected == merge.earliest(series_list))
+    assert np.allclose(expected, merge.earliest(series_list))
