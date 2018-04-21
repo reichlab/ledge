@@ -1,0 +1,73 @@
+#+TITLE: Merge
+
+#+PROPERTY: header-args :eval never :tangle ./merge.py
+
+#+BEGIN_SRC python :exports none
+  """
+  This file is generated using an accompanying org file.
+  Do not edit manually.
+  """
+#+END_SRC
+
+#+BEGIN_SRC python :exports none
+  import xarray as xr
+  import numpy as np
+  from typing import List, Union
+  from ledge.datatypes import Truth, Loss
+  from ledge.utils import get_lag
+#+END_SRC
+
+Functions for merging multiple series with different /lags/ to return a single
+one. A series here is:
+
+#+BEGIN_SRC python
+  Series = Union[Truth, Loss]
+#+END_SRC
+
+#+BEGIN_SRC python :exports none
+  def _get_right_envelope(ds: xr.Dataset) -> xr.DataArray:
+      """
+      Get an envelope of non nan values from the right
+      """
+
+      array = ds.to_array()
+      n_cols = array.shape[0]
+
+      col_idx = n_cols - 1 - np.flip(np.isnan(array), axis=0).argmin(dim="variable")
+      return array.isel(variable = col_idx).rename({ "variable": "lag" })
+
+
+  def _merge_lags(series_list: List[Series]) -> xr.Dataset:
+      """
+      Create a left joined dataset
+      """
+
+      return xr.merge([ser.rename(get_lag(ser)) for ser in series_list], join="left")
+
+#+END_SRC
+
+There are two functions as of now. ~latest~ provides the latest value available
+(value with highest lag) for a given timepoint, while ~earliest~ does the
+opposite.
+
+#+BEGIN_SRC python
+  def latest(series_list: List[Series], sort_fn=get_lag) -> Series:
+      """
+      Return series with largest lag. Prefer series without lag set.
+      """
+
+      dataset = _merge_lags(sorted(series_list, key=sort_fn))
+      latest_series = _get_right_envelope(dataset)
+      latest_series.attrs = series_list[0].attrs
+      latest_series.attrs.pop("lag", None)
+      return latest_series
+#+END_SRC
+
+#+BEGIN_SRC python
+  def earliest(series_list: List[Series]) -> Series:
+      """
+      Return series with smallest lag.
+      """
+
+      return latest(series_list, sort_fn=lambda l: -get_lag(l))
+#+END_SRC

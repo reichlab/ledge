@@ -1,5 +1,6 @@
 """
-Merge functions for lagged timeseries
+This file is generated using an accompanying org file.
+Do not edit manually.
 """
 
 import xarray as xr
@@ -8,9 +9,7 @@ from typing import List, Union
 from ledge.datatypes import Truth, Loss
 from ledge.utils import get_lag
 
-
 Series = Union[Truth, Loss]
-
 
 def _get_right_envelope(ds: xr.Dataset) -> xr.DataArray:
     """
@@ -31,7 +30,6 @@ def _merge_lags(series_list: List[Series]) -> xr.Dataset:
 
     return xr.merge([ser.rename(get_lag(ser)) for ser in series_list], join="left")
 
-
 def latest(series_list: List[Series], sort_fn=get_lag) -> Series:
     """
     Return series with largest lag. Prefer series without lag set.
@@ -42,7 +40,6 @@ def latest(series_list: List[Series], sort_fn=get_lag) -> Series:
     latest_series.attrs = series_list[0].attrs
     latest_series.attrs.pop("lag", None)
     return latest_series
-
 
 def earliest(series_list: List[Series]) -> Series:
     """
