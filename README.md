@@ -14,9 +14,13 @@ value is specified by:
 1. `timepoint`: The time itself
 2. `lag`: Time the value was revealed - `timepoint`
 
-## TODO Usage
+## Usage
 
-`ledge` is a composed from a bunch of types (`./ledge/datatypes.org`) and
-functions. It works with
+`ledge` is a composed from a bunch of types and functions. It works with
 [DataArrays](http://xarray.pydata.org/en/stable/generated/xarray.DataArray.html#xarray.DataArray)
 for model _predictions_, _losses_ and _truths_.
+
+There is no single model and the user is supposed to _compose_ a model using the
+components in here. Each module is written as a literate
+[org-mode](https://orgmode.org/) file and contains usage documentation for the
+containing functions. Start with the main file `./ledge/README.org`.
