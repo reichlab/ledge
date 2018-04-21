@@ -1,0 +1,11 @@
+#+TITLE: ledge
+
+This is the main ledge package. Most of the ~.py~ files here are generated from an
+accompanying ~.org~ file. We give a brief description of all the modules in this
+file. Look in the org files to know more about a module.
+
+- ~datatypes~ contains description of the xarrays that we use to denote the data.
+- ~fill~ contains some imputation function for lagged series.
+- ~merge~ contains functions to extract a single series from a set of lagged ones.
+- ~update~ has the implementations for various weight update techniques.
+- ~utils~ has utilities.
