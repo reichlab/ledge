@@ -1,5 +1,6 @@
 """
-Imputation functions for dataset
+This file is generated using an accompanying org file.
+Do not edit manually.
 """
 
 import xarray as xr
@@ -8,9 +9,7 @@ from typing import List, Union
 from functools import partial, wraps
 from ledge.datatypes import Truth, Loss
 
-
 Series = Union[Truth, Loss]
-
 
 def window_linear(size, alpha=1):
     """
@@ -36,20 +35,6 @@ def window_uniform(size):
 
     return np.ones(size)
 
-
-def normalize(window_fn):
-    """
-    Decorator for normalizing the window function output
-    """
-
-    @wraps(window_fn)
-    def _wrapper(*args, **kwargs):
-        weights = window_fn(*args, **kwargs)
-        return weights / np.sum(weights)
-
-    return _wrapper
-
-
 def lookback(window_size):
     """
     Decorator for clipping the lookback size to a limit.
@@ -69,6 +54,17 @@ def lookback(window_size):
         return _wrapper
     return lookback_dec
 
+def normalize(window_fn):
+    """
+    Decorator for normalizing the window function output
+    """
+
+    @wraps(window_fn)
+    def _wrapper(*args, **kwargs):
+        weights = window_fn(*args, **kwargs)
+        return weights / np.sum(weights)
+
+    return _wrapper
 
 def diff_window(series_list: List[Series], window_fn, inc=False) -> List[Series]:
     """
@@ -94,14 +90,11 @@ def diff_window(series_list: List[Series], window_fn, inc=False) -> List[Series]
 
     return output
 
-
 diff_mean = partial(diff_window, window_fn=normalize(window_uniform))
 diff_mean.__doc__ = "Weigh the past by taking mean of all"
 
-
 diff_linear = partial(diff_window, window_fn=normalize(window_linear))
 diff_linear.__doc__ = "Fill in values by weighing the past linearly"
-
 
 def diff_geometric(series_list: List[Series], gamma: float, inc=False) -> List[Series]:
     """
