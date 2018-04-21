@@ -77,6 +77,9 @@ the leader is. Need to look in the effect to lag here.
 #+END_SRC
 
 * Fixed share
+Fixes share update as described in Herbster, M., & Warmuth, M. K., Tracking the
+best expert, Machine learning, 32(2), 151–178 (1998). This provides regret
+gaurantees with respect to the best changing sequence of experts.
 
 #+BEGIN_SRC python
   def fixed_share(losses: List[Loss], eta: float, alpha: float, init_weights=None) -> Weight:
@@ -102,6 +105,8 @@ the leader is. Need to look in the effect to lag here.
 #+END_SRC
 
 * TODO Variable share
+Variable share update as described in Herbster, M., & Warmuth, M. K., Tracking
+the best expert, Machine learning, 32(2), 151–178 (1998).
 
 #+BEGIN_SRC python
   def variable_share(losses: List[Loss]) -> Weight:
@@ -113,6 +118,9 @@ the leader is. Need to look in the effect to lag here.
 #+END_SRC
 
 * Multiplicative weights
+Vanilla multiplicative weight algorithm from Arora, S., Hazan, E., & Kale, S.,
+The multiplicative weights update method: a meta-algorithm and applications.,
+Theory of Computing, 8(1), 121–164 (2012).
 
 #+BEGIN_SRC python
   def mw(losses: List[Loss], eta: float, init_weights=None) -> Weight:
@@ -131,6 +139,9 @@ the leader is. Need to look in the effect to lag here.
 #+END_SRC
 
 * Hedging
+Hedging from Freund, Y., & Schapire, R. E., A decision-theoretic generalization
+of on-line learning and an application to boosting, Journal of computer and
+system sciences, 55(1), 119–139 (1997).
 
 #+BEGIN_SRC python
   def hedge(losses: List[Loss], eta: float, init_weights=None) -> Weight:
