@@ -11,7 +11,3 @@ publish:
 	pipenv run python setup.py sdist bdist_wheel
 	pipenv run twine upload dist/*
 	rm -rf build dist
-
-.PHONY: docs
-docs:
-	cd docs && pipenv run make html

@@ -9,7 +9,6 @@ name = "pypi"
 twine = "*"
 mypy = "*"
 pytest = "*"
-sphinx = "*"
 
 [requires]
 python_version = "3.6"
