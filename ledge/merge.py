@@ -8,6 +8,7 @@ import numpy as np
 from typing import List, Union
 from ledge.datatypes import Truth, Loss
 from ledge.utils import get_lag
+from functools import partial
 
 Series = Union[Truth, Loss]
 
@@ -28,7 +29,10 @@ def _merge_lags(series_list: List[Series]) -> xr.Dataset:
     Create a left joined dataset
     """
 
-    return xr.merge([ser.rename(get_lag(ser)) for ser in series_list], join="left")
+    # Merge based on the longest series
+    longest_series = max(series_list, key=len)
+    reindexed_list = [ser.reindex_like(longest_series, copy=False) for ser in series_list]
+    return xr.merge([ser.rename(get_lag(ser)) for ser in reindexed_list], join="left")
 
 def latest(series_list: List[Series], sort_fn=get_lag) -> Series:
     """
@@ -41,9 +45,5 @@ def latest(series_list: List[Series], sort_fn=get_lag) -> Series:
     latest_series.attrs.pop("lag", None)
     return latest_series
 
-def earliest(series_list: List[Series]) -> Series:
-    """
-    Return series with smallest lag.
-    """
-
-    return latest(series_list, sort_fn=lambda l: -get_lag(l))
+earliest = partial(latest, sort_fn=lambda l: -get_lag(l))
+earliest.__doc__ = "Return series with smallest lag."

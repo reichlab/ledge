@@ -15,6 +15,7 @@
   from typing import List, Union
   from ledge.datatypes import Truth, Loss
   from ledge.utils import get_lag
+  from functools import partial
 #+END_SRC
 
 Functions for merging multiple series with different /lags/ to return a single
@@ -42,8 +43,10 @@ one. A series here is:
       Create a left joined dataset
       """
 
-      return xr.merge([ser.rename(get_lag(ser)) for ser in series_list], join="left")
-
+      # Merge based on the longest series
+      longest_series = max(series_list, key=len)
+      reindexed_list = [ser.reindex_like(longest_series, copy=False) for ser in series_list]
+      return xr.merge([ser.rename(get_lag(ser)) for ser in reindexed_list], join="left")
 #+END_SRC
 
 There are two functions as of now. ~latest~ provides the latest value available
@@ -61,13 +64,7 @@ opposite.
       latest_series.attrs = series_list[0].attrs
       latest_series.attrs.pop("lag", None)
       return latest_series
-#+END_SRC
 
-#+BEGIN_SRC python
-  def earliest(series_list: List[Series]) -> Series:
-      """
-      Return series with smallest lag.
-      """
-
-      return latest(series_list, sort_fn=lambda l: -get_lag(l))
+  earliest = partial(latest, sort_fn=lambda l: -get_lag(l))
+  earliest.__doc__ = "Return series with smallest lag."
 #+END_SRC
