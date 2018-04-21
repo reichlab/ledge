@@ -1,5 +1,6 @@
 """
-Functions for updating weights
+This file is generated using an accompanying org file.
+Do not edit manually.
 """
 
 import xarray as xr
@@ -8,6 +9,16 @@ from typing import List
 from ledge.datatypes import Loss, Weight
 from ledge.utils import uniform_weights
 
+def noop(losses: List[Loss], init_weights=None) -> Weight:
+    """
+    Do nothing.
+    """
+
+    models = [loss.attrs["model"] for loss in losses]
+    if init_weights is None:
+        return uniform_weights(models, ones=False)
+    else:
+        return init_weights
 
 def ftl(losses: List[Loss], init_weights=None) -> Weight:
     """
@@ -20,25 +31,12 @@ def ftl(losses: List[Loss], init_weights=None) -> Weight:
     return xr.DataArray([1 if i == best_idx else 0 for i in range(len(losses))],
                         dims="model", coords={ "model": models })
 
-def nop(losses: List[Loss], init_weights=None) -> Weight:
-    """
-    Do nothing.
-    """
-
-    models = [loss.attrs["model"] for loss in losses]
-    if init_weights is None:
-        return uniform_weights(models, ones=False)
-    else:
-        return init_weights
-
-
 def ftpl(losses: List[Loss]) -> Weight:
     """
     Follow the perturbed leader update.
     """
 
     raise NotImplementedError()
-
 
 def fixed_share(losses: List[Loss], eta: float, alpha: float, init_weights=None) -> Weight:
     r"""
@@ -61,14 +59,12 @@ def fixed_share(losses: List[Loss], eta: float, alpha: float, init_weights=None)
 
     return weights
 
-
 def variable_share(losses: List[Loss]) -> Weight:
     r"""
     Variable share update.
     """
 
     raise NotImplementedError()
-
 
 def mw(losses: List[Loss], eta: float, init_weights=None) -> Weight:
     r"""
@@ -83,7 +79,6 @@ def mw(losses: List[Loss], eta: float, init_weights=None) -> Weight:
     updates = [np.prod(1 - eta * loss) for loss in losses]
 
     return init_weights * updates
-
 
 def hedge(losses: List[Loss], eta: float, init_weights=None) -> Weight:
     r"""

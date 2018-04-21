@@ -1,0 +1,149 @@
+#+TITLE: Update
+
+#+PROPERTY: header-args :eval never :tangle ./update.py
+
+#+BEGIN_SRC python :exports none
+  """
+  This file is generated using an accompanying org file.
+  Do not edit manually.
+  """
+#+END_SRC
+
+This module contains implementations of some weight update techniques. Weight
+update here is decoupled from the handling of lag and take the history of losses
+instead of just one step since we might need to refit weights at each time step
+(though the history can be of length 1).
+
+Each (implemented) function in this module takes at least two args and return a
+weight xarray:
+
+1. List of ~Loss~ (as defined in [[./datatypes.org]])
+2. Keyword argument ~init_weights~ for starting weights
+
+#+BEGIN_SRC python :exports none
+  import xarray as xr
+  import numpy as np
+  from typing import List
+  from ledge.datatypes import Loss, Weight
+  from ledge.utils import uniform_weights
+#+END_SRC
+
+* ~NOOP~
+A do nothing function. This might be useful to maintain consistency while
+building models.
+
+#+BEGIN_SRC python
+  def noop(losses: List[Loss], init_weights=None) -> Weight:
+      """
+      Do nothing.
+      """
+
+      models = [loss.attrs["model"] for loss in losses]
+      if init_weights is None:
+          return uniform_weights(models, ones=False)
+      else:
+          return init_weights
+#+END_SRC
+
+* Follow the leader
+This is a simple update which assigns full weight to the model which minimizes
+the cumulative loss till the given step. It does good when there is a clear
+winner which stays the best without switching a lot.
+
+#+BEGIN_SRC python
+  def ftl(losses: List[Loss], init_weights=None) -> Weight:
+      """
+      Follow the leader update. Give full weight to the model with least loss.
+      """
+
+      models = [loss.attrs["model"] for loss in losses]
+      best_idx = np.argmin([loss.sum() for loss in losses])
+
+      return xr.DataArray([1 if i == best_idx else 0 for i in range(len(losses))],
+                          dims="model", coords={ "model": models })
+#+END_SRC
+
+* TODO Follow the perturbed leader
+Similar to follow the leader but with added perturbations before deciding who
+the leader is. Need to look in the effect to lag here.
+
+#+BEGIN_SRC python
+  def ftpl(losses: List[Loss]) -> Weight:
+      """
+      Follow the perturbed leader update.
+      """
+
+      raise NotImplementedError()
+#+END_SRC
+
+* Fixed share
+
+#+BEGIN_SRC python
+  def fixed_share(losses: List[Loss], eta: float, alpha: float, init_weights=None) -> Weight:
+      r"""
+      Fixed share update.
+      """
+
+      models = [loss.attrs["model"] for loss in losses]
+      M = len(models)
+      T = len(losses[0])
+
+      if init_weights is None:
+          weights = uniform_weights(models, ones=False)
+      else:
+          weights = init_weights
+
+      # Vectorize this
+      for t in range(T):
+          vs = weights * np.exp([-eta * loss[t] for loss in losses])
+          weights = (alpha * np.sum(vs) / M) + (1 - alpha) * vs
+
+      return weights
+#+END_SRC
+
+* TODO Variable share
+
+#+BEGIN_SRC python
+  def variable_share(losses: List[Loss]) -> Weight:
+      r"""
+      Variable share update.
+      """
+
+      raise NotImplementedError()
+#+END_SRC
+
+* Multiplicative weights
+
+#+BEGIN_SRC python
+  def mw(losses: List[Loss], eta: float, init_weights=None) -> Weight:
+      r"""
+      Multiplicative weight update. :math:`w_i(t + 1) = w_i(t) (1 - \eta m_i(t))`
+      """
+
+      models = [loss.attrs["model"] for loss in losses]
+
+      if init_weights is None:
+          init_weights = uniform_weights(models)
+
+      updates = [np.prod(1 - eta * loss) for loss in losses]
+
+      return init_weights * updates
+#+END_SRC
+
+* Hedging
+
+#+BEGIN_SRC python
+  def hedge(losses: List[Loss], eta: float, init_weights=None) -> Weight:
+      r"""
+      Exponential weight update. :math:`w_i(t + 1) = w_i(t) e^{- \eta m_i(t)}`
+      """
+
+      models = [loss.attrs["model"] for loss in losses]
+
+      if init_weights is None:
+          init_weights = uniform_weights(models)
+
+      updates = [np.exp(-eta * np.sum(loss)) for loss in losses]
+
+      return init_weights * updates
+#+END_SRC
