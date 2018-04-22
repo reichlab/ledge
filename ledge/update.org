@@ -45,6 +45,20 @@ building models.
           return init_weights
 #+END_SRC
 
+* Pick one
+Function that always picks a defined model and assigns full weight to it.
+
+#+BEGIN_SRC python
+  def pick(losses: List[Loss], index: int, init_weights=None) -> Weight:
+      """
+      Return 1 weight for model at index and 0 for others
+      """
+
+      models = [loss.attrs["model"] for loss in losses]
+      return xr.DataArray([1 if i == index else 0 for i in range(len(losses))],
+                          dims="model", coords={ "model": models })
+#+END_SRC
+
 * Follow the leader
 This is a simple update which assigns full weight to the model which minimizes
 the cumulative loss till the given step. It does good when there is a clear
@@ -56,11 +70,8 @@ winner which stays the best without switching a lot.
       Follow the leader update. Give full weight to the model with least loss.
       """
 
-      models = [loss.attrs["model"] for loss in losses]
       best_idx = np.argmin([loss.sum() for loss in losses])
-
-      return xr.DataArray([1 if i == best_idx else 0 for i in range(len(losses))],
-                          dims="model", coords={ "model": models })
+      return pick(losses, best_idx, init_weights=init_weights)
 #+END_SRC
 
 * TODO Follow the perturbed leader

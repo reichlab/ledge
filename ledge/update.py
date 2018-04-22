@@ -20,16 +20,22 @@ def noop(losses: List[Loss], init_weights=None) -> Weight:
     else:
         return init_weights
 
+def pick(losses: List[Loss], index: int, init_weights=None) -> Weight:
+    """
+    Return 1 weight for model at index and 0 for others
+    """
+
+    models = [loss.attrs["model"] for loss in losses]
+    return xr.DataArray([1 if i == index else 0 for i in range(len(losses))],
+                        dims="model", coords={ "model": models })
+
 def ftl(losses: List[Loss], init_weights=None) -> Weight:
     """
     Follow the leader update. Give full weight to the model with least loss.
     """
 
-    models = [loss.attrs["model"] for loss in losses]
     best_idx = np.argmin([loss.sum() for loss in losses])
-
-    return xr.DataArray([1 if i == best_idx else 0 for i in range(len(losses))],
-                        dims="model", coords={ "model": models })
+    return pick(losses, best_idx, init_weights=init_weights)
 
 def ftpl(losses: List[Loss]) -> Weight:
     """
