@@ -29,13 +29,23 @@ def pick(losses: List[Loss], index: int, init_weights=None) -> Weight:
     return xr.DataArray([1 if i == index else 0 for i in range(len(losses))],
                         dims="model", coords={ "model": models })
 
-def ftl(losses: List[Loss], init_weights=None) -> Weight:
+def ftl(losses: List[Loss], k=1, lookback=None, init_weights=None) -> Weight:
     """
-    Follow the leader update. Give full weight to the model with least loss.
+    Follow the leader update. Give full weight to the k models with least loss.
+    lookback says how many steps to sum the losses for.
     """
 
-    best_idx = np.argmin([loss.sum() for loss in losses])
-    return pick(losses, best_idx, init_weights=init_weights)
+    if lookback is None or lookback < 0:
+        lookback = 0
+
+    loss_sums = [np.sum(loss[-lookback:]) for loss in losses]
+    best_indices = np.argsort(loss_sums)[:k]
+
+    weight_vec = np.zeros(len(losses))
+    weight_vec[best_indices] = 1 / k
+
+    models = [loss.attrs["model"] for loss in losses]
+    return xr.DataArray(weight_vec, dims="model", coords={ "model" : models })
 
 def ftpl(losses: List[Loss]) -> Weight:
     """
