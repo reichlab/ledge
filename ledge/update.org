@@ -55,8 +55,10 @@ Function that always picks one model and assigns full weight to it.
       """
 
       models = [loss.attrs["model"] for loss in losses]
-      return xr.DataArray([1 if i == index else 0 for i in range(len(losses))],
-                          dims="model", coords={ "model": models })
+
+      weight_vec = np.zeros(len(losses))
+      weight_vec[index] = 1
+      return xr.DataArray(weight_vec, dims="model", coords={ "model": models })
 #+END_SRC
 
 * Follow the leader

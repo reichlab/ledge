@@ -26,8 +26,10 @@ def pick(losses: List[Loss], index: int, init_weights=None) -> Weight:
     """
 
     models = [loss.attrs["model"] for loss in losses]
-    return xr.DataArray([1 if i == index else 0 for i in range(len(losses))],
-                        dims="model", coords={ "model": models })
+
+    weight_vec = np.zeros(len(losses))
+    weight_vec[index] = 1
+    return xr.DataArray(weight_vec, dims="model", coords={ "model": models })
 
 def ftl(losses: List[Loss], k=1, lookback=None, init_weights=None) -> Weight:
     """
