@@ -5,9 +5,12 @@ Do not edit manually.
 
 import xarray as xr
 import numpy as np
-from typing import List
+from typing import List, Callable
 from ledge.datatypes import Loss, Weight
 from ledge.utils import uniform_weights
+from inspect import signature
+from functools import reduce
+import operator
 
 def noop(losses: List[Loss], init_weights=None) -> Weight:
     """
@@ -19,6 +22,24 @@ def noop(losses: List[Loss], init_weights=None) -> Weight:
         return uniform_weights(models, ones=False)
     else:
         return init_weights
+
+def create_mixer(update_fns: List[Callable], mixing_weights: np.ndarray) -> Callable:
+    """
+    Use weights (assumed to be normalized) to mix the update functions
+    """
+
+    def _mix_update(losses: List[Loss], init_weights=None) -> Weight:
+
+        weights = []
+
+        for update_fn, mw in zip(update_fns, mixing_weights):
+            # Don't overwrite the init_weights if present in the component updater
+            iw = signature(update_fn).parameters["init_weights"].default or init_weights
+            weights.append(update_fn(losses, init_weights=iw) * mw)
+
+        return reduce(operator.add, weights[1:], weights[0])
+
+    return _mix_update
 
 def pick(losses: List[Loss], index: int, init_weights=None) -> Weight:
     """
