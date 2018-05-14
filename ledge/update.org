@@ -28,7 +28,7 @@ weight xarray:
   from ledge.utils import uniform_weights
 #+END_SRC
 
-* ~NOOP~
+* Noop
 A do nothing function. This might be useful to maintain consistency while
 building models.
 
