@@ -1,0 +1,38 @@
+#+TITLE: Visualizations
+
+#+PROPERTY: header-args :eval never :tangle ./viz.py
+
+#+BEGIN_SRC python :exports none
+  """
+  This file is generated using an accompanying org file.
+  Do not edit manually.
+  """
+#+END_SRC
+
+This module contains some visualization functions for better understanding the
+weight updates and losses.
+
+#+BEGIN_SRC python :exports none
+  import xarray as xr
+  from typing import List, Callable
+  from ledge.datatypes import Loss, Weight
+  from ledge.utils import uniform_weights
+  import matplotlib.pyplot as plt
+#+END_SRC
+
+* Losses
+
+** TODO Cumulative losses
+
+** TODO Lag plots
+The general purpose equivalent of mm plots.
+
+* Weights
+
+** TODO Weight update plots
+The gh heatmap style plots from online-lag-ensemble.
+
+** TODO Weight on loss
+Visualizer to show how the weights /accumulate/ losses on the cumulative curves.
+Notice that the losses accumulated are given by the rise of the cumulative
+segemnt covered.

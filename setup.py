@@ -11,7 +11,8 @@ with open(path.join("ledge", "__about__.py")) as fp:
 requirements = [
     "numpy",
     "pandas",
-    "xarray"
+    "xarray",
+    "matplotlib"
 ]
 
 setup(
