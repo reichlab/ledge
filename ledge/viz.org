@@ -22,7 +22,35 @@ weight updates and losses.
 
 * Losses
 
-** TODO Cumulative losses
+** Cumulative losses
+Cumulative losses are one of the main metric considered while dynamic updating
+weights. For example, the simplest follow the leader algorithm works directly
+using the cumulative loss.
+
+Plotting these can help in understanding where the switches happen in an ftl-ish
+algorithm.
+
+#+BEGIN_SRC python
+  def c_profile(ax, losses: List[Loss],
+                xlabel="Timepoints", ylabel="Loss",
+                title="Cumulative loss profile"):
+      """
+      Plot cumulative profile for given losses
+      """
+
+      losses = sorted(losses, key=sum, reverse=True)
+      c_losses = [l.cumsum() for l in losses]
+
+      for cl, l in zip(c_losses, losses):
+          ax.plot(l.timepoints, cl, label=l.attrs['model'])
+          total = float(cl[-1])
+          ax.annotate(f"{total:.4f}", xy=(l.timepoints[-1], total))
+
+      ax.set_xlabel(xlabel)
+      ax.set_ylabel(ylabel)
+      ax.set_title(title)
+      ax.legend()
+#+END_SRC
 
 ** TODO Lag plots
 The general purpose equivalent of mm plots.
